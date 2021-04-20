@@ -1,0 +1,90 @@
+import java.io.IOException;
+import java.util.Vector;
+
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+
+
+@ServerEndpoint(value = "/ws")
+public class ServerSocket {
+
+	private volatile static Vector<Session> exsitingSessions = new Vector<Session>(); //this is a Vector for storing all connections
+  private volatile static Map<Session, Session> GameSessions= new private static Map<Session, Session>(); // this is a session-to-session map to send messages appropriately
+	
+	@OnOpen
+	public void open(Session session) {
+    session.getUserProperties().put("paired", false);
+    synchronized(existingSessionsSessions) {
+      for (Session activeSession : existingSessions){
+        
+        if (activeSession.isOpen() && activeSession.getUserProperties().get("paired").equals(false)){
+              
+              synchronized(GameSessions) {
+                GameSessions.put( activeSession, session);
+                GameSessions.put( session, activeSession); //dublicate with reversed key-value for the ease of use later on
+                session.getUserProperties().put("paired", true);
+                activeSession.getUserProperties().put("paired", true);
+              }
+            break;
+        }
+        
+        existingSessions.add(session);
+        String message=""; //put in here whatever we need to let the user know that they can make the first move
+        session.getBasicRemote().sendText(message);
+        
+      }
+    }
+        
+  }
+    
+    
+	}
+	
+	@OnMessage
+	public void onMessage(String message, Session session) {
+    
+    //DO SOMETHING HERE TO STORE/CHECK THE MOVES
+    
+    
+		try {
+      
+      synchronized(GameSessions) {
+			    
+				    Session opponent= GameSessions.get(session);
+            
+            
+            if (opponent.isOpen()){
+				        opponent.getBasicRemote().sendText(message);
+            }
+			   }
+      }
+		} catch (IOException ioe) {
+			System.out.println("ioe: " + ioe.getMessage());
+			close(session);
+		}
+	}
+	
+	@OnClose
+	public void close(Session session) {
+      
+      //DECLARE WINNER???
+      
+      synchronized(GameSessions) {
+			    Session opponent= GameSessions.get(session);
+          GameSessions.remove(session);
+          GameSessions.remove(opponent);
+          
+      }
+		existingSessions.remove(session);
+    existingSessions.remove(opponent);
+	}
+	
+	@OnError
+	public void error(Throwable error) {
+		//DO SOMETHING HERE (e.g. declare winner???)
+	}
+}
