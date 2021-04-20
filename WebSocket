@@ -33,8 +33,12 @@ public class ServerSocket {
         }
         
         existingSessions.add(session);
-        String message=""; //put in here whatever we need to let the user know that they can make the first move
-        session.getBasicRemote().sendText(message);
+	
+	if (session.getUserProperties().get("paired").equals(true)){
+	
+        	String message=""; //put in here whatever we need to let the client side know that they can make the first move
+        	session.getBasicRemote().sendText(message);
+	}
         
       }
     }
@@ -48,6 +52,9 @@ public class ServerSocket {
 	public void onMessage(String message, Session session) {
     
     //DO SOMETHING HERE TO STORE/CHECK THE MOVES
+    I suggest we create a separate class which stores all the necessary information and carries out all the necessary operations. For each game session an instance of
+    the class will be created and stored in a map (where the key is, for example, size of map+1) and and we add the key to
+    session.getUserProperties() to identify which insatnce to work with when recieving/sending message in a web socket.
     
     
 		try {
@@ -64,14 +71,12 @@ public class ServerSocket {
       }
 		} catch (IOException ioe) {
 			System.out.println("ioe: " + ioe.getMessage());
-			close(session);
+			//DO SOMETHING TO DECLARE THE AUTOMATIC WINNER then close(session)?
 		}
 	}
 	
 	@OnClose
 	public void close(Session session) {
-      
-      //DECLARE WINNER???
       
       synchronized(GameSessions) {
 			    Session opponent= GameSessions.get(session);
