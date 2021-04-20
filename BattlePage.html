@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="BattlePage.css">
+<title>BattleShips</title>
+<script>
+	var selected=0;
+	var selectedonoppo=0;
+	var positions = [];
+	var opponentPositions=[];
+	var gamestarted=0;
+	var yourturn=0;
+	var move=0;
+	var hitsonoppo=0;
+	window.onload = function() {
+  		for(var i=0;i<10;i++){
+			for(var y=0;y<10;y++){
+				document.getElementById("grid").innerHTML= document.getElementById("grid").innerHTML + "<div class=\"box\" id=\""+i+y+"\" onclick=\"SelectBox(this.id);\"></div>";
+			}
+			document.getElementById("grid").innerHTML=document.getElementById("grid").innerHTML+"</br>";
+		}
+	};
+	function PlayMove(){
+		if(yourturn){
+			if(selectedonoppo==0){
+				alert("Select a move to play on your opponent's grid!");
+				return;
+			}
+			//move is sent here (remove 2 and send)
+			
+			selectedonoppo=0;
+			if(opponentPositions.includes(move)){
+				document.getElementById(move).outerHTML = "<div class=\"RedBox\" id=\""+move+"\"></div>";
+				alert("IT WAS A HIT!");
+				move=0;
+				hitsonoppo++;
+				if(hitsonoppo==4){//change to 16
+					alert("YOU WIN!!!!!!!");
+					CloseGame();
+				}
+				YourTurn();
+			}else{
+				alert("It missed :(");
+				document.getElementById(move).outerHTML = "<div class=\"GreenBox\" id=\""+move+"\"></div>";
+				move=0;
+				NotYourTurn();
+			}
+		}else{
+			alert("It is not your turn yet!")
+		}
+	}
+	function SelectBox(item){
+		if(gamestarted==0){
+			if(document.getElementById(item).outerHTML.includes("BlackBox")){
+				document.getElementById(item).outerHTML = "<div class=\"box\" id=\""+item+"\" onclick=\"SelectBox(this.id);\"></div>"
+				for(var p=0;p<positions.length;p++){
+					if(parseInt(item)==positions[p]){
+						positions.splice(p, 1);
+						break;
+					}
+				}
+				selected--;
+				return;
+			}
+			if(selected==16){ 
+				alert("You have already selected the maximum number of ships to place!");
+				return;
+			}
+			positions.push(parseInt(item));
+			selected++;
+			document.getElementById(item).outerHTML = "<div class=\"BlackBox\" id=\""+item+"\" onclick=\"SelectBox(this.id);\"></div>";
+		}
+	}
+	function SelectBoxOpponent(item){
+		if(yourturn){
+			if(document.getElementById(item).outerHTML.includes("BlackBox")){
+				document.getElementById(item).outerHTML = "<div class=\"box\" id=\""+item+"\" onclick=\"SelectBoxOpponent(this.id);\"></div>"
+				move=0;
+				selectedonoppo=0;
+				return;
+			}
+			if(selectedonoppo==1){
+				alert("You have already selected a move!");
+				return;
+			}
+			move = parseInt(item);
+			selectedonoppo++;
+			document.getElementById(item).outerHTML = "<div class=\"BlackBox\" id=\""+item+"\" onclick=\"SelectBoxOpponent(this.id);\"></div>";
+		}
+	}
+	function YourTurn(){
+		yourturn=1;
+		document.getElementById("Instructions").innerHTML = "Choose a move!";
+		document.getElementById("button").outerHTML = "<button type=\"button\" id=\"button\" onclick=\"PlayMove();\">Send Move!</button>";
+	}
+	function NotYourTurn(){
+		yourturn=0;
+		document.getElementById("Instructions").innerHTML = "Wait for your turn!";
+		document.getElementById("button").outerHTML = "";
+		//get opponent move here
+	}
+	function StartGame(){
+		gamestarted=1;
+		YourTurn(); //change according to sv
+	}
+	function CloseGame(){
+		window.location.replace("http://www.w3schools.com");
+	}
+	function Place(){
+		// if(selected<16){
+		// 	alert("Please place all 16 ships before starting the battle!");
+		// }else{
+			//GET OPPONENT SHIPS
+		//}
+		document.getElementById("button").outerHTML = "<button type=\"button\" id=\"button\" onclick=\"PlayMove();\">Send Move!</button>";
+		document.getElementById("Instructions").innerHTML = "Please wait for your opponent to place his ships!";
+		//WAIT FOR SERVER
+		opponentPositions = [222,322,422,522];
+		document.getElementById("GridHeaders").innerHTML = "Your Grid <span style=\"padding-left:320px;\">Opponent's Grid</span>";
+		for(var i=0;i<10;i++){
+			for(var y=0;y<10;y++){
+				document.getElementById("grid2").innerHTML= document.getElementById("grid2").innerHTML + "<div class=\"box\" id=\""+i+y+2+"\" onclick=\"SelectBoxOpponent(this.id);\"></div>";
+			}
+			document.getElementById("grid2").innerHTML=document.getElementById("grid2").innerHTML+"</br>";
+		}
+		document.getElementById("Instructions").innerHTML = "Wait for your turn!";
+		StartGame();
+	}
+</script>
+</head>
+<body>
+	<div id="Header">BATTLESHIPS</div>
+	<div id="GridHeaders"> Your Grid </br></div>
+	<div id="grid"></div>
+	<div id="grid2"></div>
+	<div id="Instructions">Place 16 of your ships on the grid and start the fight when you're ready!</div>
+	</br>
+	<button type="button" id="button" onclick="Place();">START FIGHT!</button>
+</body>
+</html>

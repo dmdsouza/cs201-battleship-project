@@ -1,0 +1,77 @@
+#Header{
+	font-size:40px;
+	padding: 20px;
+	background-color:black;
+	color:white;
+	text-align:center;
+	font-family: Tahoma, sans-serif;
+	font-weight: bold;
+}
+#Instructions{
+	padding-left:100px;
+	font-size: 20px;
+}
+#GridHeaders{
+	font-size: 30px;
+	padding-top:10px;
+	padding-left:100px;
+}
+.box{
+	padding-top: 0px;
+	font-size: 14px;
+	width:30px;
+	height:30px;
+	border:2px solid black;
+	display: inline-block;
+}
+.box:hover {
+  background-color: grey;
+}
+.GreenBox{
+	padding: 0px;
+	width:30px;
+	height:30px;
+	border:2px solid black;
+	display: inline-block;
+	background-color:green;
+	color:green;
+	text-align: center;
+}
+.RedBox{
+	padding: 0px;
+	width:30px;
+	height:30px;
+	border:2px solid black;
+	display: inline-block;
+	background-color:red;
+	color:red;
+	text-align: center;
+}
+.BlackBox{
+	padding-top: 0px;
+	font-size: 14px;
+	width:30px;
+	height:30px;
+	border:2px solid black;
+	display: inline-block;
+	background-color: black;
+}
+#grid{
+	padding-left:100px;
+	display: inline-block;
+}
+#grid2{
+	padding-left:100px;
+	display: inline-block;
+}
+#button{
+	outline:none;
+	position: absolute;
+	left:100px;
+	padding:10px;
+	border-radius: 10px;
+	background-color: black;
+	color:white;
+	font-family: Tahoma, sans-serif;
+	font-weight: bold;
+}

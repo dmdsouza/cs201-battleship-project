@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="LoginPage.css">
+<title>BattleShips</title>
+<script>
+</script>
+</head>
+<body>
+<div id="Header">BATTLESHIPS</div>
+<form name="form1" method="GET" action="">
+		<fieldset>
+          <label for ="username">Username</label>
+          <input type="text" id="username" name="username" value="" required/><br>
+          <label for ="password">Password</label>
+          <input type="password" id="password" name="password" value="" required/><br>
+          <input type="button" class="button" name="log" value="Login" onclick="Login();"/>         
+        </fieldset>
+</form>
+<form name="form2" method="GET" action="">
+		<fieldset>
+          <label for ="username">Username</label>
+          <input type="text" id="username" name="username" required/><br>
+          <label for ="password">Password</label>
+          <input type="password" id="password" name="password" required/><br>
+          <label for ="passwordconfirm">Re-enter Password</label>
+          <input type="password" id="passwordconfirm" name="passwordconfirm" required/><br>
+          <input type="button" class="button" name="sign" value="Sign Up" onclick="signUp();"/>         
+        </fieldset>
+</form>
+
+</body>
+</html>
