@@ -2,10 +2,10 @@ import java.util.List;
 import java.util.ArrayList;
 public class Top10Users {
 	
-	public List<TopUser> stocks;
+	public List<TopUser> users;
 	
 	public Top10Users(List<TopUser> list) {
-		this.stocks=list;
+		this.users=list;
 		
 	}
 	
