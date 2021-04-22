@@ -1,0 +1,14 @@
+import java.util.List;
+import java.util.ArrayList;
+public class Top10Users {
+	
+	public List<TopUser> stocks;
+	
+	public Top10Users(List<TopUser> list) {
+		this.stocks=list;
+		
+	}
+	
+	
+
+}
