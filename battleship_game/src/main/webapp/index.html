@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Chat Client</title>
+		<script>
+			var socket;
+			function connectToServer() {
+				console.log("Hello");
+				socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
+				console.log("connect?");
+				socket.onopen = function(event) {
+					document.getElementById("mychat").innerHTML += "Connected!<br />";
+					console.log("connet?");
+				}
+				socket.onmessage = function(event) {
+					document.getElementById("mychat").innerHTML += event.data + "<br />";
+				}
+				socket.onclose = function(event) {
+					document.getElementById("mychat").innerHTML += "Disconnected!<br />";
+				}
+			}
+			function sendMessage() {
+				socket.send("Papa: " + document.chatform.message.value);
+				return false;
+			}
+		</script>
+	</head>
+	<body onload="connectToServer()">
+		<form name="chatform" onsubmit="return sendMessage();">
+			<input type="text" name="message" value="Type Here!" /><br />
+			<input type="submit" name="submit" value="Send Message" />
+		</form>
+		<br />
+		<div id="mychat"></div>
+	</body>
+</html>

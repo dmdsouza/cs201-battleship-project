@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="LoginPage.css">
+<title>BattleShips</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	
+	function Login(){
+		console.log("1");
+		$.ajax({
+	      url: "Login",
+	     data: {
+	       username: document.form1.username.value,
+	       password: document.form1.password.value,
+	     },
+	     success: function( reply ) {
+	    	 console.log("2");
+	    	 if($.trim(reply)==="exists"){
+	    		 console.log("3");
+	    		 sessionStorage.setItem("user",document.form1.username.value)
+	    		 window.location.href ='index.html';
+	    	 }
+	    	 
+	    	 else{
+	    		 console.log("4");
+	    		 document.getElementById("username").value='';
+	    		 document.getElementById("password").value='';
+	    		 console.log(reply);
+			 //show some error message
+	    	 }
+	    	 
+	    	 
+	    	 
+	     }
+	});
+		
+		
+	}
+	
+	
+	function signUp(){
+		$.ajax({
+	      url: "SignUp",
+	     data: {
+	       username: document.form2.username2.value,
+	       password: document.form2.password2.value,
+	     },
+	     success: function( reply ) {
+	    	 
+	    	 if($.trim(reply)==="success"){
+	    		 sessionStorage.setItem("user",document.form2.username2.value)
+	    		 window.location.href ='BattlePage.html';
+	    	 }
+	    	 
+	    	 else{
+	    		 document.getElementById("username2").value='';
+	    		 document.getElementById("password2").value='';
+			 //show some error message
+	    	 }
+	    	 
+	    	 
+	    	 
+	     }
+	});
+		
+		
+	}
+	
+	
+	
+</script>
+</head>
+<body>
+<div id="Header">BATTLESHIPS</div>
+<form name="form1" method="GET" action="">
+		<fieldset>
+          <label for ="username">Username</label>
+          <input type="text" id="username" name="username" value="" required/><br>
+          <label for ="password">Password</label>
+          <input type="password" id="password" name="password" value="" required/><br>
+          <input type="button" class="button" name="log" value="Login" onclick="Login();"/>         
+        </fieldset>
+</form>
+<form name="form2" method="GET" action="">
+		<fieldset>
+          <label for ="username">Username</label>
+          <input type="text" id="username2" name="username2" required/><br>
+          <label for ="password">Password</label>
+          <input type="password" id="password2" name="password2" required/><br>
+          <label for ="passwordconfirm">Re-enter Password</label>
+          <input type="password" id="passwordconfirm" name="passwordconfirm" required/><br>
+          <input type="button" class="button" name="sign" value="Sign Up" onclick="signUp();"/>         
+        </fieldset>
+</form>
+
+</body>
+</html>
