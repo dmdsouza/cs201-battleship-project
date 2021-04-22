@@ -4,6 +4,66 @@
 <link rel="stylesheet" href="LoginPage.css">
 <title>BattleShips</title>
 <script>
+	
+	function Login(){
+		$.ajax({
+	      url: "Login",
+	     data: {
+	       username: document.from1.username.value,
+	       password: document.form1.password.value,
+	     },
+	     success: function( reply ) {
+	    	 
+	    	 if($.trim(reply)==="exists"){
+	    		 sessionStorage.setItem("user",document.LoginForm.username.value)
+	    		 window.location.href ='BattlePage.html';
+	    	 }
+	    	 
+	    	 else{
+	    		 document.getElementById("username").value='';
+	    		 document.getElementById("password").value='';
+			 //show some error message
+	    	 }
+	    	 
+	    	 
+	    	 
+	     }
+	});
+		
+		
+	}
+	
+	
+	function signUp(){
+		$.ajax({
+	      url: "SignUp",
+	     data: {
+	       username: document.from2.username.value,
+	       password: document.form2.password.value,
+	     },
+	     success: function( reply ) {
+	    	 
+	    	 if($.trim(reply)==="success"){
+	    		 sessionStorage.setItem("user",document.LoginForm.username.value)
+	    		 window.location.href ='BattlePage.html';
+	    	 }
+	    	 
+	    	 else{
+	    		 document.getElementById("username").value='';
+	    		 document.getElementById("password").value='';
+			 //show some error message
+	    	 }
+	    	 
+	    	 
+	    	 
+	     }
+	});
+		
+		
+	}
+	
+	
+	
 </script>
 </head>
 <body>
