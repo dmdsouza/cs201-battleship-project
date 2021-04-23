@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +14,8 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint("/echo")
 public class random_matchmaking {
 	private volatile static Vector<Session> existingSessions = new Vector<Session>();
-	private Map<String, String> GameSessions = new HashMap<String, String>();
-	private Map<Session, Boolean> paired = new HashMap<Session,Boolean>();
+	private static Map<String, String> GameSessions = new HashMap<String, String>();
+	private static Map<Session, Boolean> paired = new HashMap<Session,Boolean>();
 	
 	@OnOpen
 	
@@ -89,11 +87,15 @@ public class random_matchmaking {
 			synchronized (GameSessions) {
 				String opponent = GameSessions.get(session.getId());
 				for(Session s:existingSessions) {
+					System.out.println("Current session: " +s.getId());
+					System.out.println("opponent id: "+ opponent);
 					if(s.getId().equals(opponent)) {
 						try {
+							System.out.println("sending");
 							s.getBasicRemote().sendText(message);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
+							System.out.println("error2");
 							e.printStackTrace();
 						}
 					}
