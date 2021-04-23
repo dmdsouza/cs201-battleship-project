@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="BattlePage.css">
+<link rel="stylesheet" href="battleship.css">
 <title>BattleShips</title>
 <script>
 	var selected=0;
@@ -12,33 +12,36 @@
 	var yourturn=0;
 	var move=0;
 	var hitsonoppo=0;
+	var socket;
 	window.onload = function() {
         //setting up the socket connection
-        var socket;
-			function connectToServer() {
-				console.log("Hello");
-				socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
-				console.log("connect?");
-				socket.onopen = function(event) {
-					document.getElementById("servermsg").innerHTML += "Connected!<br />";
-					console.log("connet?");
-				}
-				socket.onmessage = function(event) {
-                console.log(event.data);
-                if("start" in event.data)
-                    {
-                        document.getElementById("waiting").style.display = "none";
-                        document.getElementById("matchFound").style.display = "block";
-                        var temp = event.data.split(",");
-                        console.log(temp);
-                        console.log(temp[1]);
-                        document.getElementById("servermsg").innerHTML += " " + temp[1];
-                    }					
-				}
-				socket.onclose = function(event) {
-					document.getElementById("servermsg").innerHTML += "Disconnected!<br />";
-				}
+        
+			
+			console.log("Hello");
+			socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
+			console.log("connect?");
+			socket.onopen = function(event) {
+				document.getElementById("servermsg").innerHTML += "Connected!<br />";
+				console.log("connet?");
 			}
+			socket.onmessage = function(event) {
+               console.log(event.data);
+               var msg = JSON.parse(event.data);
+               if(msg.game == "start")
+                   {
+                       document.getElementById("waiting").style.display = "none";
+                       document.getElementById("matchFound").style.display = "block";
+                       document.getElementById("servermsg").innerHTML += " " + msg.player;
+                   }	
+               else
+               	{
+               		console.log("No Start found in event.data");
+               	}
+			}
+			socket.onclose = function(event) {
+				document.getElementById("servermsg").innerHTML += "Disconnected!<br />";
+			}
+			
 			function sendMessage(msg) {
 				socket.send(msg);
 			}

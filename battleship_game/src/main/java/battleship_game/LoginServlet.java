@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 			
 			
 			try{
-				conn = DriverManager.getConnection("{sql address}");
+				conn = DriverManager.getConnection("{connect to sql instance at IP address}");
 			
 			ps = conn.prepareStatement("SELECT * from LoginDetails.loginInfo WHERE username=? AND password= ?;");
 			ps.setString(1, Username);
