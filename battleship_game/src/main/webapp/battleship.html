@@ -12,7 +12,10 @@
 	var yourturn=0;
 	var move=0;
 	var hitsonoppo=0;
+	var hitsonyou=0;
 	var socket;
+	var player;
+	var messagereceive=0;
 	window.onload = function() {
         //setting up the socket connection
         
@@ -32,10 +35,18 @@
                        document.getElementById("waiting").style.display = "none";
                        document.getElementById("matchFound").style.display = "block";
                        document.getElementById("servermsg").innerHTML += " " + msg.player;
+                       player=msg.player;
                    }	
-               else
+               else if(msg.game=="ongoing")
                	{
-               		console.log("No Start found in event.data");
+               		if(messagereceive==0){
+               			opponentPositions=msg.positions;
+               			messagereceive++;
+               		}else{
+               			var y = msg.move.substring(0, event.data.length - 1);
+               			OpponentMove(parseInt(y));
+               		}
+               		console.log(event.data);
                	}
 			}
 			socket.onclose = function(event) {
@@ -52,21 +63,37 @@
 			document.getElementById("grid").innerHTML=document.getElementById("grid").innerHTML+"</br>";
 		}
 	};
+	function OpponentMove(moveoppo){
+		if(positions.includes(moveoppo)){
+			document.getElementById(moveoppo).outerHTML = "<div class=\"RedBox\" id=\""+moveoppo+"\"></div>";
+			alert("YOUR OPPONENT HIT YOUR SHIP :(");
+			NotYourTurn();
+			hitsonyou++;
+			if(hitsonyou==16){
+				alert("You lost :(");
+				CloseGame();
+			}
+		}else{
+			document.getElementById(moveoppo).outerHTML = "<div class=\"GreenBox\" id=\""+moveoppo+"\"></div>";
+			alert("YOUR OPPONENT MISSED LOL");
+			YourTurn();
+		}
+	}
 	function PlayMove(){
 		if(yourturn){
 			if(selectedonoppo==0){
 				alert("Select a move to play on your opponent's grid!");
 				return;
 			}
-			//move is sent here (remove 2 and send)
-			
+			var object = {"game":"ongoing","move":move};
+			sendMessage(JSON.stringify(object));
 			selectedonoppo=0;
 			if(opponentPositions.includes(move)){
 				document.getElementById(move).outerHTML = "<div class=\"RedBox\" id=\""+move+"\"></div>";
 				alert("IT WAS A HIT!");
 				move=0;
 				hitsonoppo++;
-				if(hitsonoppo==4){//change to 16
+				if(hitsonoppo==16){//change to 16
 					alert("YOU WIN!!!!!!!");
 					CloseGame();
 				}
@@ -133,21 +160,40 @@
 	}
 	function StartGame(){
 		gamestarted=1;
-		YourTurn(); //change according to sv
+		if(player==1){
+			YourTurn();
+		}	
 	}
 	function CloseGame(){
-		window.location.replace("http://www.w3schools.com");
+		var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "ShowLeaderboard", true);
+        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhttp.onreadystatechange = function() {
+        	var y = this.responseText;
+        	for(i in y.users){
+        		var name=response.users[i].username; 
+        		var PointsWon=response.users[i].points;
+        		//print name
+        		//print PointsWon
+        		//line break
+        	}
+        	//button to return
+        }
+        xhttp.send();
 	}
 	function Place(){
-		// if(selected<16){
-		// 	alert("Please place all 16 ships before starting the battle!");
-		// }else{
-			//GET OPPONENT SHIPS
-		//}
+		if(selected<16){
+		 	alert("Please place all 16 ships before starting the battle!");
+	    }else{
+	    	var object = {"game":"ongoing",positions};
+			sendMessage(JSON.stringify(object));
+		}
 		document.getElementById("button").outerHTML = "<button type=\"button\" id=\"button\" onclick=\"PlayMove();\">Send Move!</button>";
 		document.getElementById("Instructions").innerHTML = "Please wait for your opponent to place his ships!";
-		//WAIT FOR SERVER
-		opponentPositions = [222,322,422,522];
+		while(opponentPositions.size==0){
+			timeout(100);
+		}
+		//opponentPositions = [222,322,422,522];
 		document.getElementById("GridHeaders").innerHTML = "Your Grid <span style=\"padding-left:320px;\">Opponent's Grid</span>";
 		for(var i=0;i<10;i++){
 			for(var y=0;y<10;y++){
