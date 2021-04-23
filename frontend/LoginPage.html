@@ -23,7 +23,7 @@
 	    	 else{
 	    		 document.getElementById("username").value='';
 	    		 document.getElementById("password").value='';
-			 //show some error message
+			 show_alert();
 	    	 }
 	    	 
 	    	 
@@ -52,7 +52,7 @@
 	    	 else{
 	    		 document.getElementById("username").value='';
 	    		 document.getElementById("password").value='';
-			 //show some error message
+			 show_alert2();
 	    	 }
 	    	 
 	    	 
@@ -62,6 +62,14 @@
 		
 		
 	}
+	
+	function show_alert() {
+    alert("Incorrect usename and/or password");
+}
+	
+	function show_alert2() {
+    alert("Username alrady taken. Please pick a different one.");
+}
 	
 	
 	
