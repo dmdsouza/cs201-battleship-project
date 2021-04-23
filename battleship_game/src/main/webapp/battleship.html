@@ -66,8 +66,8 @@
 	//			console.log("plssss ");
 		//	}
 
-  		for(var i=0;i<10;i++){
-			for(var y=0;y<10;y++){
+  		for(var i=1;i<11;i++){
+			for(var y=1;y<11;y++){
 				document.getElementById("grid").innerHTML= document.getElementById("grid").innerHTML + "<div class=\"box\" id=\""+i+y+"\" onclick=\"SelectBox(this.id);\"></div>";
 			}
 			document.getElementById("grid").innerHTML=document.getElementById("grid").innerHTML+"</br>";
@@ -174,8 +174,8 @@
 	}
 	function StartGame(){
 		document.getElementById("GridHeaders").innerHTML = "Your Grid <span style=\"padding-left:320px;\">Opponent's Grid</span>";
-		for(var i=0;i<10;i++){
-			for(var y=0;y<10;y++){
+		for(var i=1;i<11;i++){
+			for(var y=1;y<11;y++){
 				document.getElementById("grid2").innerHTML= document.getElementById("grid2").innerHTML + "<div class=\"box\" id=\""+i+y+2+"\" onclick=\"SelectBoxOpponent(this.id);\"></div>";
 			}
 			document.getElementById("grid2").innerHTML=document.getElementById("grid2").innerHTML+"</br>";
@@ -191,21 +191,22 @@
 		}	
 	}
 	function CloseGame(){
-		var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "ShowLeaderboard", true);
-        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhttp.onreadystatechange = function() {
-        	var y = this.responseText;
-        	for(i in y.users){
-        		var name=response.users[i].username; 
-        		var PointsWon=response.users[i].points;
+		alert("Display leaderboard and close");
+//		var xhttp = new XMLHttpRequest();
+//       xhttp.open("GET", "ShowLeaderboard", true);
+//        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+//        xhttp.onreadystatechange = function() {
+//        	var y = this.responseText;
+//        	for(i in y.users){
+//        		var name=response.users[i].username; 
+//        		var PointsWon=response.users[i].points;
         		//print name
         		//print PointsWon
         		//line break
-        	}
+//        	}
         	//button to return
-        }
-        xhttp.send();
+//        }
+//        xhttp.send();
 	}
 	function Place(){
 		if(selected<16){//make 16
