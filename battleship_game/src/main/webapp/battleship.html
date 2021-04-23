@@ -13,6 +13,7 @@
 	var move=0;
 	var hitsonoppo=0;
 	var hitsonyou=0;
+	var ready=0;
 	var socket;
 	var player;
 	var messagereceive=0;
@@ -21,7 +22,7 @@
         
 			
 			console.log("Hello");
-			socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
+			socket = new WebSocket("ws://localhost:8082/testproject/echo");
 			console.log("connect?");
 			socket.onopen = function(event) {
 				document.getElementById("servermsg").innerHTML += "Connected!<br />";
@@ -41,21 +42,30 @@
                	{
                		if(messagereceive==0){
                			opponentPositions=msg.positions;
+               			for(var i=0;i<opponentPositions.length;i++){
+               				opponentPositions[i]=parseInt(opponentPositions[i] +"2");
+               			}
+               			if(ready==1){
+               				StartGame();
+               			}
                			messagereceive++;
                		}else{
-               			var y = msg.move.substring(0, event.data.length - 1);
-               			OpponentMove(parseInt(y));
+               			var y = msg.move;
+               			y=y/10;
+               			y=Math.floor(y);
+               			OpponentMove(y);
                		}
+               	}else{
                		console.log(event.data);
                	}
 			}
 			socket.onclose = function(event) {
 				document.getElementById("servermsg").innerHTML += "Disconnected!<br />";
 			}
-			
-			function sendMessage(msg) {
-				socket.send(msg);
-			}
+	//		socket.onerror = function(event){
+	//			console.log("plssss ");
+		//	}
+
   		for(var i=0;i<10;i++){
 			for(var y=0;y<10;y++){
 				document.getElementById("grid").innerHTML= document.getElementById("grid").innerHTML + "<div class=\"box\" id=\""+i+y+"\" onclick=\"SelectBox(this.id);\"></div>";
@@ -63,6 +73,9 @@
 			document.getElementById("grid").innerHTML=document.getElementById("grid").innerHTML+"</br>";
 		}
 	};
+	function sendMessage(msg) {
+		socket.send(msg);
+	}
 	function OpponentMove(moveoppo){
 		if(positions.includes(moveoppo)){
 			document.getElementById(moveoppo).outerHTML = "<div class=\"RedBox\" id=\""+moveoppo+"\"></div>";
@@ -150,18 +163,31 @@
 	function YourTurn(){
 		yourturn=1;
 		document.getElementById("Instructions").innerHTML = "Choose a move!";
+		document.getElementById("button").style.display = "block";
 		document.getElementById("button").outerHTML = "<button type=\"button\" id=\"button\" onclick=\"PlayMove();\">Send Move!</button>";
 	}
 	function NotYourTurn(){
 		yourturn=0;
 		document.getElementById("Instructions").innerHTML = "Wait for your turn!";
-		document.getElementById("button").outerHTML = "";
+		document.getElementById("button").style.display = "none";
 		//get opponent move here
 	}
 	function StartGame(){
+		document.getElementById("GridHeaders").innerHTML = "Your Grid <span style=\"padding-left:320px;\">Opponent's Grid</span>";
+		for(var i=0;i<10;i++){
+			for(var y=0;y<10;y++){
+				document.getElementById("grid2").innerHTML= document.getElementById("grid2").innerHTML + "<div class=\"box\" id=\""+i+y+2+"\" onclick=\"SelectBoxOpponent(this.id);\"></div>";
+			}
+			document.getElementById("grid2").innerHTML=document.getElementById("grid2").innerHTML+"</br>";
+		}
+		document.getElementById("button").style.display = "none";
+		document.getElementById("button").outerHTML = "<button type=\"button\" id=\"button\" onclick=\"PlayMove();\">Send Move!</button>";
+		document.getElementById("Instructions").innerHTML = "Wait for your turn!";
 		gamestarted=1;
 		if(player==1){
 			YourTurn();
+		}else{
+			NotYourTurn();
 		}	
 	}
 	function CloseGame(){
@@ -182,27 +208,21 @@
         xhttp.send();
 	}
 	function Place(){
-		if(selected<16){
+		if(selected<16){//make 16
 		 	alert("Please place all 16 ships before starting the battle!");
 	    }else{
+	    	gamestarted=1;
 	    	var object = {"game":"ongoing",positions};
 			sendMessage(JSON.stringify(object));
-		}
-		document.getElementById("button").outerHTML = "<button type=\"button\" id=\"button\" onclick=\"PlayMove();\">Send Move!</button>";
-		document.getElementById("Instructions").innerHTML = "Please wait for your opponent to place his ships!";
-		while(opponentPositions.size==0){
-			timeout(100);
+			document.getElementById("Instructions").innerHTML = "Please wait for your opponent to place his ships!";
+			ready=1;
+			document.getElementById("button").style.display = "none";
+			console.log(opponentPositions.length);
+			if(opponentPositions.length!=0){
+				StartGame();
+			}
 		}
 		//opponentPositions = [222,322,422,522];
-		document.getElementById("GridHeaders").innerHTML = "Your Grid <span style=\"padding-left:320px;\">Opponent's Grid</span>";
-		for(var i=0;i<10;i++){
-			for(var y=0;y<10;y++){
-				document.getElementById("grid2").innerHTML= document.getElementById("grid2").innerHTML + "<div class=\"box\" id=\""+i+y+2+"\" onclick=\"SelectBoxOpponent(this.id);\"></div>";
-			}
-			document.getElementById("grid2").innerHTML=document.getElementById("grid2").innerHTML+"</br>";
-		}
-		document.getElementById("Instructions").innerHTML = "Wait for your turn!";
-		StartGame();
 	}
 </script>
 </head>
