@@ -12,62 +12,69 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+
 @ServerEndpoint("/echo")
 public class random_matchmaking {
 	private volatile static Vector<Session> existingSessions = new Vector<Session>();
-	private Map<String, Session> GameSessions = new HashMap<String, Session>();
+	private Map<String, String> GameSessions = new HashMap<String, String>();
 	private Map<Session, Boolean> paired = new HashMap<Session,Boolean>();
 	
 	@OnOpen
+	
 	public void open(Session session) {
-		System.out.println("hi");
 		session.getUserProperties().put("paired", false);
+		System.out.println("hi1");
 		synchronized (existingSessions) {
-			for(Session activeSession : existingSessions)
-			{
-				if(activeSession.isOpen() && activeSession.getUserProperties().get("paired").equals(false))
-				{
-					synchronized (GameSessions) {
-						GameSessions.put(activeSession.getId(), session);
-						GameSessions.put(session.getId(), activeSession);
+			for(Session activeSession:existingSessions) {
+				if(activeSession.isOpen() && activeSession.getUserProperties().get("paired").equals(false)){
+					synchronized(GameSessions) {
+						GameSessions.put(activeSession.getId(),session.getId());
+						GameSessions.put(session.getId(),activeSession.getId());
 						session.getUserProperties().put("paired",true);
-						activeSession.getUserProperties().put("paired",true);						
+						activeSession.getUserProperties().put("paired",true);
 					}
+					break;
 				}
-				break;				
 			}
 			existingSessions.add(session);
 		}
+		System.out.println("hi2");
 		if(session.getUserProperties().get("paired").equals(true))
 		{
 			//Sending the start message to both players
-			
+			System.out.println("hi3");
 			String message1 = "{\"game\":\"start\",\"player\":1}";
 			String message2 = "{\"game\":\"start\",\"player\":2}";
-			Session otherSession = GameSessions.get(session);
-		
+			String otherSession = GameSessions.get(session.getId());
+			
 			session.getAsyncRemote().sendText(message1);
-		    otherSession.getAsyncRemote().sendText(message2);
-		}
-		synchronized (GameSessions) {
-			for(Map.Entry<String,Session> entry : GameSessions.entrySet()) {
-				System.out.println(entry.getKey());
-				System.out.println(entry.getValue().getId());
+			synchronized(existingSessions) {
+				for(Session s:existingSessions) {
+					if(s.getId().equals(otherSession)) {
+						s.getAsyncRemote().sendText(message2);
+					}
+				}
 			}
-		}
-		
-		
+			System.out.println("hi4");
+		}   
+
 	}
 	
 	
 	@OnClose
 	public void close(Session session) {
 		synchronized (GameSessions) {
-			Session opponent = GameSessions.get(session);
-			GameSessions.remove(session);
+			String opponent = GameSessions.get(session.getId());
+			GameSessions.remove(session.getId());
 			GameSessions.remove(opponent);
 			synchronized (existingSessions) {
-				existingSessions.remove(opponent);
+				Session y=null;
+				for(Session s:existingSessions) {
+					if(s.getId().equals(opponent)) {
+						y=s;
+					}
+				}	
+				existingSessions.remove(y);	
 				existingSessions.remove(session);	
 			}						
 		}
@@ -77,21 +84,23 @@ public class random_matchmaking {
 	
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		//try {
 		System.out.println(message);
-		synchronized (GameSessions) {
-			for(Map.Entry<String,Session> entry : GameSessions.entrySet()) {
-				System.out.println(entry.getKey());
-				System.out.println(entry.getValue().getId());
+		synchronized (existingSessions) {
+			synchronized (GameSessions) {
+				String opponent = GameSessions.get(session.getId());
+				for(Session s:existingSessions) {
+					if(s.getId().equals(opponent)) {
+						try {
+							s.getBasicRemote().sendText(message);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}		
 			}
 		}
-			synchronized (GameSessions) {
-				System.out.println(session.getId());
-				if(GameSessions.get(session).isOpen())
-				{
-					GameSessions.get(session).getAsyncRemote().sendText(message);
-				}				
-			}
+			
 	//	} 
 		//catch (IOException ioe) {
 		//	System.out.println("ioe: " + ioe.getMessage());
