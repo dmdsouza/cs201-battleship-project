@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+function DisplayFavorites(){
+	
+	 $.ajax({
+	      url: "ShowLeaderboard",
+	     
+	     success: function( response ) {
+		
+	    		
+	    		if (!$.trim(output.stocks)){
+	    		
+	    			alert("Currently no matches have been played.");
+
+	    		}
+		
+	    
+	    	for (i in output.users) {
+        
+              
+              var NewUser= '<span>Username: '+output.users[i].username+' Number of Points: '+output.users[i].points+'</span><br>';
+              document.getElementById("output").insertAdjacentHTML('beforeend', NewUser);
+	  		}
+        }
+        
+        
+        }
+});
+
+$(document).ready(function() {
+	  if (sessionStorage.getItem("user")!=null){
+		  document.getElementById("LogIn").style.display = "none";
+		  document.getElementById("StartGame").style.display = "block";
+	  }
+	});
+
+</script>
+<body>
+
+<div id= "topbar" class="topbar">
+ <p>
+  <button class="button" style="display:none; id="LogIn">Log in</button>
+  <button class="button" style="display:none; id= "StartGame" onclick="window.location.href='NAMEOFFILE'">Start Game</button>
+  
+  </p>
+  
+</div>
+
+<div id="output">
+
+
+<div>
+
+</body>
+
+</html>
