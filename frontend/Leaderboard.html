@@ -8,7 +8,14 @@ $(document).ready(function() {
 		  document.getElementById("LogIn").style.display = "none";
 		  document.getElementById("StartGame").style.display = "block";
 	  }
+	  
+	  else{
+		  document.getElementById("LogIn").style.display = "block";
+		  document.getElementById("StartGame").style.display = "none";
+	  }
+});
 	
+$(document).ready(function() {
 	$.ajax({
 	      url: "ShowLeaderboard",
 	     
@@ -30,24 +37,20 @@ $(document).ready(function() {
 	  		}
         }
 	});
-}
+});
 
 </script>
 <body>
 
-<div id= "topbar" class="topbar">
- <p>
-  <button class="button" style="display:none; id="LogIn" onclick="window.location.href='login.html'">Log in</button>
-  <button class="button" style="display:none; id= "StartGame" onclick="window.location.href='battleship.html'">Start Game</button>
+
+  <button class="button" style="display:none" id="LogIn" onclick="window.location.href='login.html'">Log in</button>
+  <button class="button" style="display:none" id= "StartGame" onclick="window.location.href='battleship.html'">Start Game</button>
   
-  </p>
-  
-</div>
 
 <div id="output">
 
 
-<div>
+</div>
 
 </body>
 
