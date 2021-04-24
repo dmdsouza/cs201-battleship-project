@@ -7,71 +7,58 @@
 <script>
 	
 	function Login(){
+		console.log("1");
 		$.ajax({
 	      url: "Login",
 	     data: {
-	       username: document.from1.username.value,
+	       username: document.form1.username.value,
 	       password: document.form1.password.value,
 	     },
 	     success: function( reply ) {
-	    	 
+	    	 console.log("2");
 	    	 if($.trim(reply)==="exists"){
-	    		 sessionStorage.setItem("user",document.LoginForm.username.value)
-	    		 window.location.href ='BattlePage.html';
+	    		 console.log("3");
+	    		 sessionStorage.setItem("user",document.form1.username.value)
+	    		 window.location.href ='index.html';
 	    	 }
 	    	 
 	    	 else{
+	    		 console.log("4");
 	    		 document.getElementById("username").value='';
 	    		 document.getElementById("password").value='';
-			 show_alert();
-	    	 }
-	    	 
-	    	 
-	    	 
+	    		 console.log(reply);
+			 //show some error message
+	    	 }	    	 
 	     }
-	});
+	});		
 		
-		
-	}
-	
+	}	
 	
 	function signUp(){
 		$.ajax({
 	      url: "SignUp",
 	     data: {
-	       username: document.from2.username.value,
-	       password: document.form2.password.value,
+	       username: document.form2.username2.value,
+	       password: document.form2.password2.value,
 	     },
 	     success: function( reply ) {
 	    	 
 	    	 if($.trim(reply)==="success"){
-	    		 sessionStorage.setItem("user",document.LoginForm.username.value)
+	    		 sessionStorage.setItem("user",document.form2.username2.value)
 	    		 window.location.href ='BattlePage.html';
 	    	 }
 	    	 
 	    	 else{
-	    		 document.getElementById("username").value='';
-	    		 document.getElementById("password").value='';
-			 show_alert2();
+	    		 document.getElementById("username2").value='';
+	    		 document.getElementById("password2").value='';
+			 //show some error message
 	    	 }
 	    	 
 	    	 
 	    	 
 	     }
-	});
-		
-		
+	});		
 	}
-	
-	function show_alert() {
-    alert("Incorrect usename and/or password");
-}
-	
-	function show_alert2() {
-    alert("Username alrady taken. Please pick a different one.");
-}
-	
-	
 	
 </script>
 </head>
@@ -89,9 +76,9 @@
 <form name="form2" method="GET" action="">
 		<fieldset>
           <label for ="username">Username</label>
-          <input type="text" id="username" name="username" required/><br>
+          <input type="text" id="username2" name="username2" required/><br>
           <label for ="password">Password</label>
-          <input type="password" id="password" name="password" required/><br>
+          <input type="password" id="password2" name="password2" required/><br>
           <label for ="passwordconfirm">Re-enter Password</label>
           <input type="password" id="passwordconfirm" name="passwordconfirm" required/><br>
           <input type="button" class="button" name="sign" value="Sign Up" onclick="signUp();"/>         

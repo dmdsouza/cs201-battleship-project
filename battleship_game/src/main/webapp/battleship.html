@@ -23,6 +23,7 @@
 			
 			console.log("Hello");
 			socket = new WebSocket("ws://localhost:8082/testproject/echo");
+//          socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
 			console.log("connect?");
 			socket.onopen = function(event) {
 				document.getElementById("servermsg").innerHTML += "Connected!<br />";
