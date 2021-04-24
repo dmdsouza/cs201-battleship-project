@@ -4,6 +4,48 @@
 <link rel="stylesheet" href="LoginPage.css">
 <title>BattleShips</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+	<script>
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyATWblWf2isdmSiaDf2a3fkzEl8N6tBI1s",
+	    authDomain: "total-market-311316.firebaseapp.com",
+	    projectId: "total-market-311316",
+	    storageBucket: "total-market-311316.appspot.com",
+	    messagingSenderId: "43887046841",
+	    appId: "1:43887046841:web:df6cceb4a0a722a9f22b68"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	</script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css" />
+    <script type="text/javascript">
+      // FirebaseUI config.
+      var uiConfig = {
+        signInSuccessUrl: 'index.html',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        ],
+        // tosUrl and privacyPolicyUrl accept either url string or a callback
+        // function.
+        // Terms of service url/callback.
+        tosUrl: '<your-tos-url>',
+        // Privacy policy url/callback.
+        privacyPolicyUrl: function() {
+          window.location.assign('<your-privacy-policy-url>');
+        }
+      };
+
+      // Initialize the FirebaseUI Widget using Firebase.
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
+      // The start method will wait until the DOM is loaded.
+      ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
 <script>
 	
 	function Login(){
@@ -84,6 +126,7 @@
           <input type="button" class="button" name="sign" value="Sign Up" onclick="signUp();"/>         
         </fieldset>
 </form>
+<div id="firebaseui-auth-container"></div>
 
 </body>
 </html>

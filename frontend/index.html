@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+	<script>
+	
+	
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyATWblWf2isdmSiaDf2a3fkzEl8N6tBI1s",
+	    authDomain: "total-market-311316.firebaseapp.com",
+	    projectId: "total-market-311316",
+	    storageBucket: "total-market-311316.appspot.com",
+	    messagingSenderId: "43887046841",
+	    appId: "1:43887046841:web:df6cceb4a0a722a9f22b68"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	</script>
+	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script> 
+    <script type="text/javascript">
+      initApp = function() {
+    	
+        firebase.auth().onAuthStateChanged(function(user) {
+        	//checks if the user is logged in 
+          if (user || sessionStorage.getItem("user") != null) {
+            // User is signed in.
+        	  document.getElementById('sign-in-status').textContent = 'Signed in';
+          } else {
+            // User is signed out.
+            document.getElementById('sign-in-status').textContent = 'Signed out';
+            
+          }
+        }, function(error) {
+          console.log(error);
+        });
+      };
+
+      window.addEventListener('load', function() {
+        initApp()
+      });
+    </script>
+</head>
+<body>
+	<p>GREAT SUCCESS<p>
+	<div id="sign-in-status"></div>
+    <div id="sign-in"></div>
+</body>
+</html>
