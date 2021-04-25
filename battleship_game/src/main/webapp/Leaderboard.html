@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function() {
+	  if (sessionStorage.getItem("user")!=null){
+		  document.getElementById("LogIn").style.display = "none";
+		  document.getElementById("StartGame").style.display = "block";
+	  }
+	  
+	  else{
+		  document.getElementById("LogIn").style.display = "block";
+		  document.getElementById("StartGame").style.display = "none";
+	  }
+});
+	
+$(document).ready(function() {
+	$.ajax({
+	      url: "ShowLeaderboard",
+	     
+	     success: function( response ) {
+				var response1 = JSON.parse(response);
+	    		console.log(response);
+	    		if (response1.users.length==0){
+	    		
+	    			alert("Currently no matches have been played.");
+
+	    		}
+		
+	    
+	    	for (i in response1.users) {
+        
+              
+              var NewUser= '<span>Username: '+response1.users[i].username+' Number of Points: '+response1.users[i].points+'</span><br>';
+              document.getElementById("output").insertAdjacentHTML('beforeend', NewUser);
+	  		}
+        }
+	});
+});
+
+</script>
+<body>
+
+ 
+  <button class="button" style="display:none" id="LogIn" onclick="window.location.href='login.html'">Log in</button>
+  <button class="button" style="display:none" id= "StartGame" onclick="window.location.href='battleship.html'">Start Game</button>
+  
+
+<div id="output"></div>
+
+</body>
+
+</html>

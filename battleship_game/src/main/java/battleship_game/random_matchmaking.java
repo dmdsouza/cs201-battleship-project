@@ -1,5 +1,4 @@
 package battleship_game;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,64 +11,69 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+
 @ServerEndpoint("/echo")
 public class random_matchmaking {
 	private volatile static Vector<Session> existingSessions = new Vector<Session>();
-	private Map<Session, Session> GameSessions = new HashMap<Session, Session>();
-	
+	private static Map<String, String> GameSessions = new HashMap<String, String>();
+	private static Map<Session, Boolean> paired = new HashMap<Session,Boolean>();
 	
 	@OnOpen
+	
 	public void open(Session session) {
 		session.getUserProperties().put("paired", false);
+		System.out.println("hi1");
 		synchronized (existingSessions) {
-			for(Session activeSession : existingSessions)
-			{
-				if(activeSession.isOpen() && activeSession.getUserProperties().get("paired").equals(false))
-				{
-					synchronized (GameSessions) {
-						GameSessions.put(activeSession, session);
-						GameSessions.put(session, activeSession);
+			for(Session activeSession:existingSessions) {
+				if(activeSession.isOpen() && activeSession.getUserProperties().get("paired").equals(false)){
+					synchronized(GameSessions) {
+						GameSessions.put(activeSession.getId(),session.getId());
+						GameSessions.put(session.getId(),activeSession.getId());
 						session.getUserProperties().put("paired",true);
-						activeSession.getUserProperties().put("paired",true);						
+						activeSession.getUserProperties().put("paired",true);
 					}
+					break;
 				}
-				break;				
 			}
 			existingSessions.add(session);
 		}
+		System.out.println("hi2");
 		if(session.getUserProperties().get("paired").equals(true))
 		{
 			//Sending the start message to both players
+			System.out.println("hi3");
+			String message1 = "{\"game\":\"start\",\"player\":1}";
+			String message2 = "{\"game\":\"start\",\"player\":2}";
+			String otherSession = GameSessions.get(session.getId());
 			
-			String message1 = "{game:start,player:1}";
-			String message2 = "{game:start,player:2}";
-			Session otherSession = GameSessions.get(session);
-			try {
-				session.getBasicRemote().sendText(message1);
-			} 
-			catch (IOException ioe) {
-				System.out.println("ioe: " + ioe.getMessage());
-				close(session);
+			session.getAsyncRemote().sendText(message1);
+			synchronized(existingSessions) {
+				for(Session s:existingSessions) {
+					if(s.getId().equals(otherSession)) {
+						s.getAsyncRemote().sendText(message2);
+					}
+				}
 			}
-			try {
-				otherSession.getBasicRemote().sendText(message2);
-			} 
-			catch (IOException ioe) {
-				System.out.println("ioe: " + ioe.getMessage());
-				close(GameSessions.get(otherSession));
-			}				
-		}
+			System.out.println("hi4");
+		}   
+
 	}
 	
 	
 	@OnClose
 	public void close(Session session) {
 		synchronized (GameSessions) {
-			Session opponent = GameSessions.get(session);
-			GameSessions.remove(session);
+			String opponent = GameSessions.get(session.getId());
+			GameSessions.remove(session.getId());
 			GameSessions.remove(opponent);
 			synchronized (existingSessions) {
-				existingSessions.remove(opponent);
+				Session y=null;
+				for(Session s:existingSessions) {
+					if(s.getId().equals(opponent)) {
+						y=s;
+					}
+				}	
+				existingSessions.remove(y);	
 				existingSessions.remove(session);	
 			}						
 		}
@@ -79,37 +83,53 @@ public class random_matchmaking {
 	
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		try {
+		System.out.println(message);
+		synchronized (existingSessions) {
 			synchronized (GameSessions) {
-				Session opponent = GameSessions.get(session);
-				if(opponent.isOpen())
-				{
-					opponent.getBasicRemote().sendText(message);
-				}				
+				String opponent = GameSessions.get(session.getId());
+				for(Session s:existingSessions) {
+					System.out.println("Current session: " +s.getId());
+					System.out.println("opponent id: "+ opponent);
+					if(s.getId().equals(opponent)) {
+						try {
+							System.out.println("sending");
+							s.getBasicRemote().sendText(message);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							System.out.println("error2");
+							e.printStackTrace();
+						}
+					}
+				}		
 			}
-		} 
-		catch (IOException ioe) {
-			System.out.println("ioe: " + ioe.getMessage());
-			synchronized (GameSessions) {
-				// Sending game over String
-				String msg = "{game:over,win:yes}";
-				try {
-					Session opponent = GameSessions.get(session);
-					opponent.getBasicRemote().sendText(msg);
-				} 
-				catch (IOException ioe2) {
-					Session opponent = GameSessions.get(session);
-					System.out.println("ioe: " + ioe2.getMessage());
-					close(GameSessions.get(opponent));
-				}
-			}
-			close(session);
 		}
+			
+	//	} 
+		//catch (IOException ioe) {
+		//	System.out.println("ioe: " + ioe.getMessage());
+//			synchronized (GameSessions) {
+//				// Sending game over String
+//				String quote = "\"";
+//				String msg = "{" + quote + "game" + quote + ":" + quote + "over" + quote + "," +
+//						quote + "win" + quote + ":" + quote + "yes" + quote +"}";
+//
+//				try {
+//					Session opponent = GameSessions.get(session);
+//					opponent.getBasicRemote().sendText(msg);
+//				} 
+//				catch (IOException ioe2) {
+//					Session opponent = GameSessions.get(session);
+//					System.out.println("ioe: " + ioe2.getMessage());
+//					close(GameSessions.get(opponent));
+//				}
+//			}
+	//		close(session);
+	//	}
 	}	
 
 	@OnError
 	public void error(Session s, Throwable error) {
 		//Do nothing. Log the Error
-		System.out.println("Error!");
+		System.out.println(error.getMessage());
 	}
 }

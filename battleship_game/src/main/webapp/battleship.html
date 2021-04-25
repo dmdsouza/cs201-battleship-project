@@ -3,6 +3,21 @@
 <head>
 <link rel="stylesheet" href="battleship.css">
 <title>BattleShips</title>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+	<script>
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyATWblWf2isdmSiaDf2a3fkzEl8N6tBI1s",
+	    authDomain: "total-market-311316.firebaseapp.com",
+	    projectId: "total-market-311316",
+	    storageBucket: "total-market-311316.appspot.com",
+	    messagingSenderId: "43887046841",
+	    appId: "1:43887046841:web:57b83b66c2562f42f22b68"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	</script>
+	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script> 
 <script>
 	var selected=0;
 	var selectedonoppo=0;
@@ -17,26 +32,23 @@
 	var socket;
 	var player;
 	var messagereceive=0;
-	window.onload = function() {
-        //setting up the socket connection
-        
-			
+	var user = sessionStorage.getItem("user");
+	function page() {
 			console.log("Hello");
-			socket = new WebSocket("ws://localhost:8082/testproject/echo");
-//          socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
+// 			socket = new WebSocket("ws://localhost:8082/testproject/echo");
+			socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
 			console.log("connect?");
 			socket.onopen = function(event) {
-				document.getElementById("servermsg").innerHTML += "Connected!<br />";
+			//	document.getElementById("servermsg").innerHTML += "Connected!<br />";
 				console.log("connet?");
 			}
 			socket.onmessage = function(event) {
-               console.log(event.data);
                var msg = JSON.parse(event.data);
                if(msg.game == "start")
                    {
                        document.getElementById("waiting").style.display = "none";
                        document.getElementById("matchFound").style.display = "block";
-                       document.getElementById("servermsg").innerHTML += " " + msg.player;
+                     //  document.getElementById("servermsg").innerHTML += " " + msg.player;
                        player=msg.player;
                    }	
                else if(msg.game=="ongoing")
@@ -56,17 +68,11 @@
                			y=Math.floor(y);
                			OpponentMove(y);
                		}
-               	}else{
-               		console.log(event.data);
                	}
 			}
 			socket.onclose = function(event) {
 				document.getElementById("servermsg").innerHTML += "Disconnected!<br />";
 			}
-	//		socket.onerror = function(event){
-	//			console.log("plssss ");
-		//	}
-
   		for(var i=1;i<11;i++){
 			for(var y=1;y<11;y++){
 				document.getElementById("grid").innerHTML= document.getElementById("grid").innerHTML + "<div class=\"box\" id=\""+i+y+"\" onclick=\"SelectBox(this.id);\"></div>";
@@ -107,8 +113,12 @@
 				alert("IT WAS A HIT!");
 				move=0;
 				hitsonoppo++;
-				if(hitsonoppo==16){//change to 16
+				if(hitsonoppo==16){
 					alert("YOU WIN!!!!!!!");
+					var xhttp = new XMLHttpRequest();
+   			        xhttp.open("GET", "updateLeaderboard?username="+user, true);
+   			        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+   			        xhttp.send();
 					CloseGame();
 				}
 				YourTurn();
@@ -171,7 +181,6 @@
 		yourturn=0;
 		document.getElementById("Instructions").innerHTML = "Wait for your turn!";
 		document.getElementById("button").style.display = "none";
-		//get opponent move here
 	}
 	function StartGame(){
 		document.getElementById("GridHeaders").innerHTML = "Your Grid <span style=\"padding-left:320px;\">Opponent's Grid</span>";
@@ -192,25 +201,10 @@
 		}	
 	}
 	function CloseGame(){
-		alert("Display leaderboard and close");
-//		var xhttp = new XMLHttpRequest();
-//       xhttp.open("GET", "ShowLeaderboard", true);
-//        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-//        xhttp.onreadystatechange = function() {
-//        	var y = this.responseText;
-//        	for(i in y.users){
-//        		var name=response.users[i].username; 
-//        		var PointsWon=response.users[i].points;
-        		//print name
-        		//print PointsWon
-        		//line break
-//        	}
-        	//button to return
-//        }
-//        xhttp.send();
+		window.location.href = "Leaderboard.html";
 	}
 	function Place(){
-		if(selected<16){//make 16
+		if(selected<16){
 		 	alert("Please place all 16 ships before starting the battle!");
 	    }else{
 	    	gamestarted=1;
@@ -224,19 +218,40 @@
 				StartGame();
 			}
 		}
-		//opponentPositions = [222,322,422,522];
 	}
+</script>
+<script type="text/javascript">
+      initApp = function() {
+    	
+        firebase.auth().onAuthStateChanged(function(user) {
+        	//checks if the user is logged in 
+          if (user || sessionStorage.getItem("user") != null) {
+            // User is signed in.
+        	  page();
+        	  document.getElementById("waiting").style.display = "block";
+          } else {
+            // User is signed out.
+            document.getElementById('sign-in-status').textContent = 'Signed out';    
+          }
+        }, function(error) {
+          console.log(error);
+        });
+      };
+
+      window.addEventListener('load', function() {
+        initApp()
+      });
 </script>
 </head>
 <body>
-    <div id = "waiting" class = "waiting"> Waiting for match...</div>
+    <div id = "waiting" class = "waiting" style="display: none"> Waiting for match...</div>
     <div id = "matchFound" style="display: none">
         <div id="Header">BATTLESHIPS</div>
-        <div id="GridHeaders"> Your Grid </br></div>
+        <div id="GridHeaders"> Your Grid <br></div>
         <div id="grid"></div>
         <div id="grid2"></div>
         <div id="Instructions">Place 16 of your ships on the grid and start the fight when you're ready!</div>
-        </br>
+        <br>
         <button type="button" id="button" onclick="Place();">START FIGHT!</button>
         <div id = "servermsg"> </div>
     </div>

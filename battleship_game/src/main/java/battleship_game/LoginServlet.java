@@ -1,5 +1,4 @@
 package battleship_game;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -29,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
       
       response.setContentType("text/html");
       String Username = request.getParameter("username");
-			String Password = request.getParameter("password");
+	  String Password = request.getParameter("password");
 			
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");}
@@ -40,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 			
 			
 			try{
-				conn = DriverManager.getConnection("{connect to sql instance at IP address}");
+				conn = DriverManager.getConnection("jdbc:mysql://35.236.121.113:3306/LoginDetails?&user=root&password=root");
 			
 			ps = conn.prepareStatement("SELECT * from LoginDetails.loginInfo WHERE username=? AND password= ?;");
 			ps.setString(1, Username);
