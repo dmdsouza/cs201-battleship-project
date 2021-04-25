@@ -66,6 +66,8 @@ public class random_matchmaking {
 				Session y=null;
 				for(Session s:existingSessions) {
 					if(s.getId().equals(opponent)) {
+						String message1 = "{\"game\":\"over\"}";
+						s.getAsyncRemote().sendText(message1);
 						y=s;
 					}
 				}	
@@ -73,8 +75,7 @@ public class random_matchmaking {
 				existingSessions.remove(session);	
 			}						
 		}
-		String message1 = "{\"game\":\"over\"}";
-		session.getAsyncRemote().sendText(message1);
+		
 			
 
 	}
