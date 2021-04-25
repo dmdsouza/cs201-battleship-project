@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" href="Leaderboard.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 
@@ -21,33 +22,32 @@ $(document).ready(function() {
 	     
 	     success: function( response ) {
 				var response1 = JSON.parse(response);
-	    		console.log(response);
 	    		if (response1.users.length==0){
 	    		
-	    			alert("Currently no matches have been played.");
-
+	    			alert("There are no users in the leaderboard!");
+					return;
 	    		}
-		
-	    
-	    	for (i in response1.users) {
-        
-              
-              var NewUser= '<span>Username: '+response1.users[i].username+' Number of Points: '+response1.users[i].points+'</span><br>';
-              document.getElementById("output").insertAdjacentHTML('beforeend', NewUser);
+	    	var statement = "<table id=\"Leaderboard\" style=\"width:25%\"> <tr> <th>Username</th> <th>Score</th> </tr>";
+	    	for (i in response1.users) {   
+	    		console.log(response1.users[i].username);
+              	statement = statement + "<tr> <td>"+response1.users[i].username+"</td> <td>"+response1.users[i].points+"</td></tr>";
 	  		}
+	    	statement = statement + "</table>";
+	    	document.getElementById("output").innerHTML = statement;
         }
 	});
 });
 
 </script>
 <body>
-
- 
+  <div id="Header">BATTLESHIPS</div>
+  <span style="font-size:40px;font-weight:bold">LEADERBOARD</span>
+  <div id="output"></div>
   <button class="button" style="display:none" id="LogIn" onclick="window.location.href='login.html'">Log in</button>
   <button class="button" style="display:none" id= "StartGame" onclick="window.location.href='battleship.html'">Start Game</button>
   
 
-<div id="output"></div>
+
 
 </body>
 

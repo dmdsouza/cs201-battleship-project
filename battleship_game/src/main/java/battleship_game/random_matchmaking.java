@@ -22,7 +22,6 @@ public class random_matchmaking {
 	
 	public void open(Session session) {
 		session.getUserProperties().put("paired", false);
-		System.out.println("hi1");
 		synchronized (existingSessions) {
 			for(Session activeSession:existingSessions) {
 				if(activeSession.isOpen() && activeSession.getUserProperties().get("paired").equals(false)){
@@ -37,11 +36,9 @@ public class random_matchmaking {
 			}
 			existingSessions.add(session);
 		}
-		System.out.println("hi2");
 		if(session.getUserProperties().get("paired").equals(true))
 		{
 			//Sending the start message to both players
-			System.out.println("hi3");
 			String message1 = "{\"game\":\"start\",\"player\":1}";
 			String message2 = "{\"game\":\"start\",\"player\":2}";
 			String otherSession = GameSessions.get(session.getId());
@@ -54,15 +51,14 @@ public class random_matchmaking {
 					}
 				}
 			}
-			System.out.println("hi4");
 		}   
 
-	}
-	
+	}	
 	
 	@OnClose
 	public void close(Session session) {
 		synchronized (GameSessions) {
+			
 			String opponent = GameSessions.get(session.getId());
 			GameSessions.remove(session.getId());
 			GameSessions.remove(opponent);
@@ -77,8 +73,10 @@ public class random_matchmaking {
 				existingSessions.remove(session);	
 			}						
 		}
+		String message1 = "{\"game\":\"over\"}";
+		session.getAsyncRemote().sendText(message1);
 			
-		System.out.println("Disconnecting!");
+
 	}
 	
 	@OnMessage
@@ -88,43 +86,15 @@ public class random_matchmaking {
 			synchronized (GameSessions) {
 				String opponent = GameSessions.get(session.getId());
 				for(Session s:existingSessions) {
-					System.out.println("Current session: " +s.getId());
-					System.out.println("opponent id: "+ opponent);
 					if(s.getId().equals(opponent)) {
-						try {
-							System.out.println("sending");
-							s.getBasicRemote().sendText(message);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							System.out.println("error2");
-							e.printStackTrace();
-						}
+
+							s.getAsyncRemote().sendText(message);
+
 					}
 				}		
 			}
 		}
 			
-	//	} 
-		//catch (IOException ioe) {
-		//	System.out.println("ioe: " + ioe.getMessage());
-//			synchronized (GameSessions) {
-//				// Sending game over String
-//				String quote = "\"";
-//				String msg = "{" + quote + "game" + quote + ":" + quote + "over" + quote + "," +
-//						quote + "win" + quote + ":" + quote + "yes" + quote +"}";
-//
-//				try {
-//					Session opponent = GameSessions.get(session);
-//					opponent.getBasicRemote().sendText(msg);
-//				} 
-//				catch (IOException ioe2) {
-//					Session opponent = GameSessions.get(session);
-//					System.out.println("ioe: " + ioe2.getMessage());
-//					close(GameSessions.get(opponent));
-//				}
-//			}
-	//		close(session);
-	//	}
 	}	
 
 	@OnError

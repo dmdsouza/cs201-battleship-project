@@ -34,13 +34,13 @@
 	var messagereceive=0;
 	var user = sessionStorage.getItem("user");
 	function page() {
-			console.log("Hello");
-// 			socket = new WebSocket("ws://localhost:8082/testproject/echo");
+			
+
 			socket = new WebSocket("wss://total-market-311316.appspot.com/echo");
-			console.log("connect?");
+			
 			socket.onopen = function(event) {
 			//	document.getElementById("servermsg").innerHTML += "Connected!<br />";
-				console.log("connet?");
+			
 			}
 			socket.onmessage = function(event) {
                var msg = JSON.parse(event.data);
@@ -48,7 +48,7 @@
                    {
                        document.getElementById("waiting").style.display = "none";
                        document.getElementById("matchFound").style.display = "block";
-                     //  document.getElementById("servermsg").innerHTML += " " + msg.player;
+                    
                        player=msg.player;
                    }	
                else if(msg.game=="ongoing")
@@ -69,6 +69,15 @@
                			OpponentMove(y);
                		}
                	}
+               else if(msg.game=="over")
+           	   {
+            	    var xhttp = new XMLHttpRequest();
+			        xhttp.open("GET", "updateLeaderboard?username="+user, true);
+			        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			        xhttp.send();
+           	   		alert("Your opponent has quit the game!");	           	   	
+					CloseGame();
+           	   }
 			}
 			socket.onclose = function(event) {
 				document.getElementById("servermsg").innerHTML += "Disconnected!<br />";
@@ -95,7 +104,7 @@
 			}
 		}else{
 			document.getElementById(moveoppo).outerHTML = "<div class=\"GreenBox\" id=\""+moveoppo+"\"></div>";
-			alert("YOUR OPPONENT MISSED LOL");
+			alert("YOUR OPPONENT MISSED");
 			YourTurn();
 		}
 	}
@@ -114,11 +123,11 @@
 				move=0;
 				hitsonoppo++;
 				if(hitsonoppo==16){
-					alert("YOU WIN!!!!!!!");
 					var xhttp = new XMLHttpRequest();
    			        xhttp.open("GET", "updateLeaderboard?username="+user, true);
    			        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
    			        xhttp.send();
+					alert("YOU WIN!!!!!!!");
 					CloseGame();
 				}
 				YourTurn();
@@ -213,7 +222,7 @@
 			document.getElementById("Instructions").innerHTML = "Please wait for your opponent to place his ships!";
 			ready=1;
 			document.getElementById("button").style.display = "none";
-			console.log(opponentPositions.length);
+			
 			if(opponentPositions.length!=0){
 				StartGame();
 			}
@@ -234,7 +243,7 @@
             document.getElementById('sign-in-status').textContent = 'Signed out';    
           }
         }, function(error) {
-          console.log(error);
+          
         });
       };
 

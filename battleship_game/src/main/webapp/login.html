@@ -24,7 +24,7 @@
     <script type="text/javascript">
       // FirebaseUI config.
       var uiConfig = {
-        signInSuccessUrl: 'battleship.html',
+        signInSuccessUrl: 'Leaderboard.html',
         signInOptions: [
           // Leave the lines as is for the providers you want to offer your users.
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -61,7 +61,7 @@
 	    	 if($.trim(reply)==="exists"){
 	    		 console.log("3");
 	    		 sessionStorage.setItem("user",document.form1.username.value)
-	    		 window.location.href ='battleship.html';
+	    		 window.location.href ='Leaderboard.html';
 	    	 }
 	    	 
 	    	 else{
@@ -87,7 +87,7 @@
 	    	 
 	    	 if($.trim(reply)==="success"){
 	    		 sessionStorage.setItem("user",document.form2.username2.value)
-	    		 window.location.href ='battleship.html';
+	    		 window.location.href ='Leaderboard.html';
 	    	 }
 	    	 
 	    	 else{
@@ -126,7 +126,7 @@
           <input type="button" class="button" name="sign" value="Sign Up" onclick="signUp();"/>         
         </fieldset>
 </form>
-<div id="firebaseui-auth-container"></div>
+<!-- <div id="firebaseui-auth-container"></div> -->
 
 </body>
 </html>

@@ -40,7 +40,7 @@ import com.google.gson.Gson;
 					try{
 						conn = DriverManager.getConnection("jdbc:mysql://35.236.121.113:3306/LoginDetails?&user=root&password=root");
 					
-					ps = conn.prepareStatement("SELECT * from LoginDetails.leaderboard ORDER BY points;");
+					ps = conn.prepareStatement("SELECT * from LoginDetails.leaderboard ORDER BY points DESC;");
 				
 					rs=  ps.executeQuery();
 			  
